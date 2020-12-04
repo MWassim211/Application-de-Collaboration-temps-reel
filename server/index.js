@@ -1,9 +1,19 @@
 const express = require('express');
+const { ExpressPeerServer } = require('peer');
+const http = require('http');
 
 const app = express();
+const server = http.createServer(app);
 const port = process.env.PORT || 3000;
 
 const path = require('path');
+
+const peerServer = ExpressPeerServer(server, {
+  debug: true,
+  path: '/mypeer',
+});
+
+app.use(peerServer);
 
 const DIST_DIR = path.join(__dirname, '../dist');
 // const HTML_FILE = path.join(DIST_DIR, 'index.html');
@@ -11,16 +21,9 @@ const DIST_DIR = path.join(__dirname, '../dist');
 // et les fichiers statiques générés par Webpack
 app.use(express.static(DIST_DIR));
 
-const mockResponse = {
-  foo: 'bar',
-  bar: 'foo',
-};
-app.get('/api', (req, res) => {
-  res.send(mockResponse);
-});
 app.get('/', (req, res) => {
-  res.status(200).send('Hello World!');
+  res.sendFile(`${__dirname}/index.html`);
 });
-app.listen(port, () => {
-  console.log(`App listening on port: ${port}`);
-});
+
+server.listen(port);
+console.log(`Listening on: ${port}`);

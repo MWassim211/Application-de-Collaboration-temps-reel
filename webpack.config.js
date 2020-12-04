@@ -1,4 +1,5 @@
 const HtmlWebPackPlugin = require('html-webpack-plugin');
+const NodemonPlugin = require('nodemon-webpack-plugin');
 const path = require('path');
 
 const htmlPlugin = new HtmlWebPackPlugin({
@@ -16,7 +17,7 @@ module.exports = (env, argv) => {
     resolve: {
       extensions: ['.js', '.jsx'],
     },
-    plugins: [htmlPlugin],
+    plugins: [htmlPlugin, new NodemonPlugin({ script: './server/index.js' })],
     performance: {
       hints: false,
       maxEntrypointSize: 512000,
