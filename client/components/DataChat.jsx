@@ -1,90 +1,131 @@
-/* eslint-disable no-undef */
-/* eslint-disable no-unused-vars */
-/* eslint-diseable */
 import React, { useState } from 'react';
-import Button from '@material-ui/core/Button';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
 import { makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
+import {
+  TextField, IconButton, Button, Card, CardContent, CardActions, Collapse, Grid,
+} from '@material-ui/core';
+import SendIcon from '@material-ui/icons/Send';
+import CloseIcon from '@material-ui/icons/Close';
+import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import Peer from 'peerjs';
-import { ContactSupportOutlined } from '@material-ui/icons';
 
 const peer = new Peer({
   host: 'localhost',
   port: 3000,
   path: '/mypeer',
+  debug: 2,
 });
 
-let conn = null;
-
-peer.on('connection', (receivedConn) => {
-  conn = receivedConn;
-  console.log('connexion etablished');
-});
-
-const useStyles = makeStyles((theme) => ({
-  form: {
-    '& > *': {
-      margin: theme.spacing(1),
-      width: '25ch',
-    },
+const useStyles = makeStyles(() => ({
+  root: {
+    maxWidth: 345,
   },
 }));
 
-const start = (otherId) => {
-  conn = peer.connect(otherId);
-  console.log(conn);
-  setTimeout(() => {
-    console.log('time out ');
-  });
-  conn.on('data', (data) => {
-    console.log('Received', data);
-  });
-};
-
-const send = () => {
-  console.log('data sent');
-  conn.send('helloyyy');
-};
-
-function DataChat(props) {
+function Chat() {
   const classes = useStyles();
-  const [startAvailable, setStart] = useState(true);
+  const [startAvailable, setStart] = useState(false);
   const [sendAvailable, setSend] = useState(false);
   const [hangupAvailable, setHangup] = useState(false);
-  const [myId, setmyId] = useState('');
-  const [otherId, setOtherId] = useState('');
+  const [conn, setConn] = useState(null);
+  const [senderId, setSenderId] = useState('');
+  const [receiverId, setReceiverId] = useState('');
 
   peer.on('open', (id) => {
-    setmyId(id);
     console.log(`My peer ID is: ${id}`);
+    setSenderId(id);
   });
 
-  return (
-    <div>
-      <form className={classes.form} noValidate autoComplete="off">
-        <TextField id="standard-basic" label="Standard" value={myId} onChange={(e) => setmyId(e.target.value)} />
-        <TextField id="filled-basic" label="Filled" variant="filled" value={otherId} onChange={(e) => setOtherId(e.target.value)} />
-        <TextField id="outlined-basic" label="Outlined" variant="outlined" />
-      </form>
-      <ButtonGroup
-        size="large"
-        color="primary"
-        aria-label="large outlined primary button group"
-      >
-        <Button onClick={() => start(otherId)}>
-          Start
-        </Button>
-        <Button>
-          Send
-        </Button>
-        <Button onClick={() => send()}>
-          Hang Up
+  peer.on('connection', (receivedConn) => {
+    setConn(receivedConn);
+    console.log('connexion etablished');
+    console.log(conn);
+    setSend(true);
+    setHangup(true);
+  });
 
+  if (conn !== null) {
+    conn.on('data', (data) => {
+      console.log('Received', data);
+    });
+  }
+
+  const start = () => {
+    if (receiverId) {
+      setConn(peer.connect(receiverId));
+      setStart(true);
+      console.log('connexion start');
+      console.log(conn);
+    }
+  };
+
+  const send = () => {
+    console.log(`sendAvailable ${sendAvailable}`);
+    conn.send('helloyyy');
+    console.log('data sent');
+  };
+
+  const hangup = () => {
+    peer.disconnect();
+    setStart(false);
+    setSend(false);
+    setHangup(false);
+    console.log('disconnect');
+  };
+
+  const handleStartClick = () => {
+    start();
+  };
+
+  const handleSendClick = () => {
+    send();
+  };
+
+  const handleHangUpClick = () => {
+    hangup();
+  };
+
+  return (
+    <Card className={classes.root}>
+      <CardContent>
+        <TextField
+          id="sender"
+          label="Sender"
+          fullWidth
+          value={senderId}
+          onChange={(e) => setSenderId(e.target.value)}
+        />
+        <TextField
+          id="receiver"
+          label="Receiver"
+          fullWidth
+          value={receiverId}
+          onChange={(e) => setReceiverId(e.target.value)}
+        />
+      </CardContent>
+      <CardActions disableSpacing>
+        {!startAvailable && (
+        <Button variant="outlined" onClick={handleStartClick} endIcon={<KeyboardArrowRightIcon />} fullWidth>
+          START
         </Button>
-      </ButtonGroup>
-    </div>
+        )}
+        {hangupAvailable && (
+          <Button variant="outlined" onClick={handleHangUpClick} endIcon={<CloseIcon />} fullWidth>
+            HANG UP
+          </Button>
+        )}
+      </CardActions>
+      <Collapse in={startAvailable} timeout="auto" unmountOnExit>
+        <CardContent>
+          <Grid container direction="row" justify="center" alignItems="baseline">
+            <TextField id="message" label="Message..." multiline rows={2} rowsMax={2} variant="outlined" width="75%" />
+            <IconButton color="primary" component="span" onClick={handleSendClick}>
+              <SendIcon />
+            </IconButton>
+          </Grid>
+        </CardContent>
+      </Collapse>
+    </Card>
   );
 }
 
-export default DataChat;
+export default Chat;

@@ -1,13 +1,11 @@
 const express = require('express');
 const { ExpressPeerServer } = require('peer');
 const http = require('http');
+const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
 const port = process.env.PORT || 3000;
-
-const path = require('path');
-
 const peerServer = ExpressPeerServer(server, {
   debug: true,
   path: '/mypeer',
