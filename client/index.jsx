@@ -4,7 +4,6 @@ import DataChat from './components/DataChat';
 
 const Index = () => (
   <div className="container">
-    Hello
     <DataChat />
   </div>
 );
