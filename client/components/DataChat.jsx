@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-  TextField, IconButton, Button, Card, CardContent, CardActions, Collapse, Grid,
+  TextField, IconButton, Button, Card, CardContent, Collapse, Grid,
 } from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
 import CloseIcon from '@material-ui/icons/Close';
@@ -20,7 +20,7 @@ let conn = null;
 
 const useStyles = makeStyles(() => ({
   root: {
-    maxWidth: 345,
+    flexGrow: 1,
   },
 }));
 
@@ -82,35 +82,41 @@ function Chat() {
   };
 
   return (
-    <Card className={classes.root}>
+    <Card width="100%">
       <CardContent>
-        <TextField
-          id="sender"
-          label="Sender"
-          fullWidth
-          value={senderId}
-          onChange={(e) => setSenderId(e.target.value)}
-        />
-        <TextField
-          id="receiver"
-          label="Receiver"
-          fullWidth
-          value={receiverId}
-          onChange={handleOnRecieverIdChange}
-        />
+        <Grid container className={classes.root} spacing={2}>
+          <Grid item xs={6} sm={5} lg={5}>
+            <TextField
+              id="sender"
+              label="Sender"
+              fullWidth
+              value={senderId}
+              onChange={(e) => setSenderId(e.target.value)}
+            />
+          </Grid>
+          <Grid item xs={6} sm={5} lg={5}>
+            <TextField
+              id="receiver"
+              label="Receiver"
+              fullWidth
+              value={receiverId}
+              onChange={handleOnRecieverIdChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={2} lg={2}>
+            {!startAvailable && (
+            <Button variant="outlined" onClick={handleStartClick} endIcon={<KeyboardArrowRightIcon />} fullWidth>
+              START
+            </Button>
+            )}
+            {hangupAvailable && (
+            <Button variant="outlined" onClick={handleHangUpClick} endIcon={<CloseIcon />} fullWidth>
+              HANG UP
+            </Button>
+            )}
+          </Grid>
+        </Grid>
       </CardContent>
-      <CardActions disableSpacing>
-        {!startAvailable && (
-        <Button variant="outlined" onClick={handleStartClick} endIcon={<KeyboardArrowRightIcon />} fullWidth>
-          START
-        </Button>
-        )}
-        {hangupAvailable && (
-          <Button variant="outlined" onClick={handleHangUpClick} endIcon={<CloseIcon />} fullWidth>
-            HANG UP
-          </Button>
-        )}
-      </CardActions>
       <MessageLists messages={messages} monid={monIdentifiant} />
       <Collapse in={sendAvailable} timeout="auto" unmountOnExit>
         <CardContent>

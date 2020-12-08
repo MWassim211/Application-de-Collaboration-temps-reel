@@ -1,26 +1,44 @@
 import React from 'react';
-// import {
-//   IconButton, Button, Card, CardContent, CardActions, Collapse, Grid,
-// } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { Box, Grid, Typography } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
+const useStyles = makeStyles(() => ({
+  root: {
+    flexGrow: 1,
+  },
+  sender: {
+    background: 'blue',
+    color: 'white',
+  },
+  receiver: {
+    background: 'red',
+    color: 'white',
+  },
+}));
+
 function MessagesList(props) {
-  const { messages, myId } = props;
+  const classes = useStyles();
+  const { messages } = props;
   return (
-    <div>
-      <ul className="">
-        {messages.map((message) => (
-          <div>
-            <div>
-              {message.owner ? myId : 'user b '}
-            </div>
-            <div>
-              {message.text}
-            </div>
-          </div>
-        ))}
-      </ul>
-    </div>
+    <Grid container className={classes.root} spacing={2} direction="column">
+      {messages.map((message) => (
+        <Grid width="100%">
+          <Box display="flex" justifyContent={message.owner ? 'flex-end' : 'flex-start'}>
+            <Box
+              m={1}
+              p={1}
+              borderRadius={16}
+              className={message.owner ? classes.sender : classes.receiver}
+            >
+              <Typography gutterBottom display="inline">
+                {message.text}
+              </Typography>
+            </Box>
+          </Box>
+        </Grid>
+      ))}
+    </Grid>
   );
 }
 
@@ -29,7 +47,6 @@ MessagesList.propTypes = {
     owner: PropTypes.bool.isRequired,
     text: PropTypes.string.isRequired,
   })).isRequired,
-  myId: PropTypes.string.isRequired,
 };
 
 export default MessagesList;
