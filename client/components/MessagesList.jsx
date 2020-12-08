@@ -1,15 +1,18 @@
 import React from 'react';
+// import {
+//   IconButton, Button, Card, CardContent, CardActions, Collapse, Grid,
+// } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
 function MessagesList(props) {
-  const { messages, monid } = props;
+  const { messages, myId } = props;
   return (
     <div>
       <ul className="">
         {messages.map((message) => (
           <div>
             <div>
-              {message.owner ? monid : 'user b '}
+              {message.owner ? myId : 'user b '}
             </div>
             <div>
               {message.text}
@@ -26,7 +29,7 @@ MessagesList.propTypes = {
     owner: PropTypes.bool.isRequired,
     text: PropTypes.string.isRequired,
   })).isRequired,
-  monid: PropTypes.string.isRequired,
+  myId: PropTypes.string.isRequired,
 };
 
 export default MessagesList;

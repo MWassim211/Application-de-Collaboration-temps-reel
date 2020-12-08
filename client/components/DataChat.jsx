@@ -30,7 +30,7 @@ function Chat() {
   const [messages, setMessagesList] = useState([]);
   const [message, setMessage] = useState('');
   const [startAvailable, setStart] = useState(false);
-  // const [sendAvailable, setSend] = useState(false);
+  const [sendAvailable, setSend] = useState(false);
   const [hangupAvailable, setHangup] = useState(false);
   const [senderId, setSenderId] = useState('');
   const [receiverId, setReceiverId] = useState('');
@@ -49,6 +49,7 @@ function Chat() {
     conn = peer.connect(receiverId);
     setStart(true);
     setHangup(true);
+    setSend(true);
   };
 
   const send = (messageText) => {
@@ -61,6 +62,7 @@ function Chat() {
     peer.disconnect();
     setStart(false);
     setHangup(false);
+    setSend(false);
   };
 
   const handleStartClick = () => {
@@ -110,10 +112,10 @@ function Chat() {
         )}
       </CardActions>
       <MessageLists messages={messages} monid={monIdentifiant} />
-      <Collapse in={startAvailable} timeout="auto" unmountOnExit>
+      <Collapse in={sendAvailable} timeout="auto" unmountOnExit>
         <CardContent>
           <Grid container direction="row" justify="center" alignItems="baseline">
-            <TextField id="message" label="Message..." multiline rows={2} rowsMax={2} variant="outlined" width="75%" value={message} onChange={handleOnMessageChange} />
+            <TextField id="message" label="Message..." multiline rows={1} rowsMax={1} variant="outlined" width="90%" value={message} onChange={handleOnMessageChange} />
             <IconButton color="primary" component="span" onClick={() => send(message)}>
               <SendIcon />
             </IconButton>
