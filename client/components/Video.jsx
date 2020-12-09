@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Button, ButtonGroup,
 } from '@material-ui/core';
@@ -8,14 +8,19 @@ function Video() {
   const [callAvailable, setCall] = useState(false);
   const [hangupAvailable, setHangup] = useState(false);
 
+  const localVideoRef = useRef(null);
+
   const gotStream = (stream) => {
+    window.stream = stream;
+    console.log(localVideoRef);
     localVideoRef.current.srcObject = stream;
     setCall(true); // On fait en sorte d'activer le bouton permettant de commencer un appel
-    localStreamRef.current = stream;
+    // localStreamRef.current = stream;
   };
 
   const start = () => {
     setStart(false);
+    setHangup(true);
     navigator.mediaDevices
       .getUserMedia({
         audio: true,
@@ -26,16 +31,29 @@ function Video() {
   };
 
   const hangUp = () => {
-
+    console.log('hangup');
+    if (window.stream) {
+      window.stream.getTracks().forEach((track) => {
+        track.stop();
+      });
+    }
+    setStart(true);
+    setHangup(false);
+    setCall(false);
   };
+
+  const call = () => {
+    console.log('call');
+  };
+
   return (
     <div>
       <video ref={localVideoRef} autoPlay muted>
-        <track kind="captions" srcLang="en" label="english_captions" />
+        {/* <track kind="captions" srcLang="en" label="english_captions" /> */}
       </video>
-      <video ref={remoteVideoRef} autoPlay>
+      {/* <video ref={remoteVideoRef} autoPlay>
         <track kind="captions" srcLang="en" label="english_captions" />
-      </video>
+      </video> */}
 
       <ButtonGroup
         size="large"
