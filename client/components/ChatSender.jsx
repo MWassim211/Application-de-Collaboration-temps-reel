@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 function ChatSender(props) {
   const classes = useStyles();
   const {
-    startAvailable, message, send, handleOnMessageChange,
+    startAvailable, message, send, handleOnMessageChange, isTyping,
   } = props;
   return (
     <div>
@@ -44,6 +44,9 @@ function ChatSender(props) {
         <CardContent>
           <Grid container spacing={3}>
             <Grid xs={11} sm={11}>
+              <p className="user-typing">
+                {isTyping && 'User is typing...'}
+              </p>
               <TextField
                 id="message"
                 label="Message..."
@@ -83,6 +86,10 @@ ChatSender.propTypes = {
   send: PropTypes.func.isRequired,
   // eslint-disable-next-line react/no-unused-prop-types
   handleOnMessageChange: PropTypes.func.isRequired,
+  // eslint-disable-next-line react/no-unused-prop-types
+  handleTyping: PropTypes.func.isRequired,
+  // eslint-disable-next-line react/no-unused-prop-types
+  isTyping: PropTypes.func.isRequired,
 };
 
 export default ChatSender;

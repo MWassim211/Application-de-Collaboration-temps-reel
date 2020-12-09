@@ -9,6 +9,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import Peer from 'peerjs';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import debounce from 'lodash/debounce';
 import MessageLists from './MessagesList';
 import ChatSender from './ChatSender';
 import ChatCorp from './ChatCorp';
@@ -31,6 +32,7 @@ const useStyles = makeStyles(() => ({
     width: '100%',
     margin: '0%',
     padding: '0%',
+    position: 'fixed',
   },
   startButton: {
     borderRadius: '0',
@@ -51,6 +53,7 @@ function Chat() {
   const [receiverId, setReceiverId] = useState('');
   const [connectedToRemote, setConnectedToRemote] = useState(false);
   const [connexionStarted, setConnexionStarted] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
 
   peer.on('open', (id) => {
     setSenderId(id);
@@ -99,8 +102,14 @@ function Chat() {
     setReceiverId(e.target.value);
   };
 
+  const handleTyping = debounce(() => {
+    setIsTyping(false);
+  }, 500);
+
   const handleOnMessageChange = (e) => {
     setMessage(e.target.value);
+    setIsTyping(true);
+    handleTyping();
   };
 
   const clipboardCopy = (e) => {
@@ -164,6 +173,7 @@ function Chat() {
       {/* {((connexionStarted) && <ChatCorp />) || ((connectedToRemote) && <ChatCorp />)} */}
       {((connexionStarted || connectedToRemote) && !(connexionStarted && connectedToRemote)
        && <ChatCorp />) }
+      {connectedToRemote && connexionStarted && <MessageLists messages={messages} />}
       {/* <Card className={classes.root}>
         <CardContent>
           <TextField
@@ -217,7 +227,9 @@ function Chat() {
         startAvailable={startAvailable}
         message={message}
         send={send}
+        isTyping={isTyping}
         handleOnMessageChange={handleOnMessageChange}
+        handleTyping={handleTyping}
       />
       )}
     </div>
