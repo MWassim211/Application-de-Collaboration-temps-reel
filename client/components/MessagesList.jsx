@@ -8,11 +8,11 @@ const useStyles = makeStyles(() => ({
     flexGrow: 1,
   },
   sender: {
-    background: 'blue',
+    background: '#8292ab',
     color: 'white',
   },
   receiver: {
-    background: 'red',
+    background: '#9ea0a3',
     color: 'white',
   },
 }));
@@ -27,7 +27,8 @@ function MessagesList(props) {
           <Box display="flex" justifyContent={message.owner ? 'flex-end' : 'flex-start'}>
             <Box
               m={1}
-              p={1}
+              pl={2}
+              pr={2}
               borderRadius={16}
               className={message.owner ? classes.sender : classes.receiver}
             >
