@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react';
 import {
-  Button, ButtonGroup,
+  Button, ButtonGroup, Container, Grid,
 } from '@material-ui/core';
+import DataChat from './DataChat';
 
 function Video() {
   const [startAvailable, setStart] = useState(true);
@@ -9,6 +10,7 @@ function Video() {
   const [hangupAvailable, setHangup] = useState(false);
 
   const localVideoRef = useRef(null);
+  const remoteVideoRef = useRef(null);
 
   const gotStream = (stream) => {
     window.stream = stream;
@@ -47,30 +49,42 @@ function Video() {
   };
 
   return (
-    <div>
-      <video ref={localVideoRef} autoPlay muted>
-        {/* <track kind="captions" srcLang="en" label="english_captions" /> */}
-      </video>
-      {/* <video ref={remoteVideoRef} autoPlay>
-        <track kind="captions" srcLang="en" label="english_captions" />
-      </video> */}
+    <Container disableGutters="true" maxWidth="false">
+      <Grid container spacing={2}>
+        <Grid item xs={3} sm={3} lg={3}>
+          <DataChat isSmall="true" />
+        </Grid>
+        <Grid item xs={9} sm={9} lg={9}>
+          <Grid container disableGutters="true" maxWidth="false" direction="column">
+            <Grid item>
 
-      <ButtonGroup
-        size="large"
-        color="primary"
-        aria-label="large outlined primary button group"
-      >
-        <Button onClick={start} disabled={!startAvailable}>
-          Start
-        </Button>
-        <Button onClick={call} disabled={!callAvailable}>
-          Call
-        </Button>
-        <Button onClick={hangUp} disabled={!hangupAvailable}>
-          Hang Up
-        </Button>
-      </ButtonGroup>
-    </div>
+              <video ref={localVideoRef} autoPlay muted>
+                <track kind="captions" srcLang="en" label="english_captions" />
+              </video>
+              <video ref={remoteVideoRef} autoPlay>
+                <track kind="captions" srcLang="en" label="english_captions" />
+              </video>
+            </Grid>
+
+            <ButtonGroup
+              size="large"
+              color="primary"
+              aria-label="large outlined primary button group"
+            >
+              <Button onClick={start} disabled={!startAvailable}>
+                Start
+              </Button>
+              <Button onClick={call} disabled={!callAvailable}>
+                Call
+              </Button>
+              <Button onClick={hangUp} disabled={!hangupAvailable}>
+                Hang Up
+              </Button>
+            </ButtonGroup>
+          </Grid>
+        </Grid>
+      </Grid>
+    </Container>
   );
 }
 
