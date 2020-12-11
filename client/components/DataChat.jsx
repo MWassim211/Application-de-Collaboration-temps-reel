@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import {
-  TextField, IconButton, Button, Card, CardContent, Grid, Container,
+  Container,
 } from '@material-ui/core';
 import Peer from 'peerjs';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import debounce from 'lodash/debounce';
 import MessageLists from './MessagesList';
 import ChatSender from './ChatSender';
 import InProgressConnection from './InProgressConnection';
+import ConnexionForm from './ConnexionForm';
 
 const peer = new Peer({
   host: 'localhost',
@@ -19,11 +18,10 @@ const peer = new Peer({
 
 let conn = null;
 
-function Chat({ isSmall }) {
+function Chat() {
   const [messages, setMessagesList] = useState([]);
   const [message, setMessage] = useState('');
   const [startAvailable, setStart] = useState(true);
-  const [hangupAvailable, setHangup] = useState(false);
   const [senderId, setSenderId] = useState('');
   const [receiverId, setReceiverId] = useState('');
   const [connectedToRemote, setConnectedToRemote] = useState(false);
@@ -48,7 +46,6 @@ function Chat({ isSmall }) {
     conn = peer.connect(receiverId);
     setStart(false);
     setConnexionStarted(true);
-    setHangup(true);
   };
 
   const send = (messageText) => {
@@ -60,7 +57,6 @@ function Chat({ isSmall }) {
   const hangup = () => {
     peer.disconnect();
     setStart(false);
-    setHangup(false);
   };
 
   const handleStartClick = () => {
@@ -71,10 +67,13 @@ function Chat({ isSmall }) {
     hangup();
   };
 
-  const handleOnRecieverIdChange = (e) => {
-    setReceiverId(e.target.value);
+  const handleOnSenderIdChange = (e) => {
+    setSenderId(e.target.value);
   };
 
+  const handleOnReceiverIdChange = (e) => {
+    setReceiverId(e.target.value);
+  };
   const handleTyping = debounce(() => {
     setIsTyping(false);
   }, 500);
@@ -85,63 +84,17 @@ function Chat({ isSmall }) {
     handleTyping();
   };
 
-  const clipboardCopy = (e) => {
-    const textField = document.getElementById('sender');
-    textField.select();
-    document.execCommand('copy');
-    e.target.focus();
-  };
-
   return (
-    <Container disableGutters="true" width="300px">
-      <Card disableSpacing="true" style={{ marginBottom: '10px' }}>
-        <CardContent>
-          <Grid container spacing={3} alignItems="center" justify="center">
-            <Grid item xs={12} sm={isSmall ? 12 : 5} lg={isSmall ? 12 : 5}>
-              <TextField
-                id="sender"
-                label="Sender"
-                fullWidth
-                value={senderId}
-                onChange={(e) => setSenderId(e.target.value)}
-                variant="outlined"
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={clipboardCopy}>
-                        <span className="material-icons">
-                          content_copy
-                        </span>
-                      </IconButton>
-                    </InputAdornment>),
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={isSmall ? 12 : 5} lg={isSmall ? 12 : 5}>
-              <TextField
-                id="receiver"
-                label="Receiver"
-                fullWidth
-                value={receiverId}
-                onChange={handleOnRecieverIdChange}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid item xs={12} sm={isSmall ? 12 : 2}>
-              {startAvailable && (
-                <Button variant="contained" color="secondary" size="large" fullWidth onClick={handleStartClick}>
-                  Start
-                </Button>
-              )}
-              {hangupAvailable && (
-                <Button variant="contained" color="secondary" size="large" fullWidth onClick={handleHangUpClick}>
-                  HangUp
-                </Button>
-              )}
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Card>
+    <Container disableGutters>
+      <ConnexionForm
+        senderId={senderId}
+        receiverId={receiverId}
+        start={startAvailable}
+        startClick={handleStartClick}
+        hangupClick={handleHangUpClick}
+        senderChanged={handleOnSenderIdChange}
+        receiverChanged={handleOnReceiverIdChange}
+      />
 
       {((connexionStarted || connectedToRemote) && !(connexionStarted && connectedToRemote)
        && <InProgressConnection />) }
@@ -150,8 +103,8 @@ function Chat({ isSmall }) {
 
       {connectedToRemote && connexionStarted && (
       <ChatSender
-        message={message}
         send={send}
+        message={message}
         isTyping={isTyping}
         handleOnMessageChange={handleOnMessageChange}
       />
@@ -162,11 +115,3 @@ function Chat({ isSmall }) {
 }
 
 export default Chat;
-
-Chat.defaultProps = {
-  isSmall: false,
-};
-
-Chat.propTypes = {
-  isSmall: PropTypes.bool,
-};

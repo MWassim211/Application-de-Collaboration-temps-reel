@@ -7,16 +7,16 @@ import PropTypes from 'prop-types';
 
 function ChatSender(props) {
   const {
-    message, send, handleOnMessageChange, isTyping, sendAvailable,
+    message, send, handleOnMessageChange, sendAvailable,
   } = props;
   return (
     <Card style={{ marginTop: '10px' }}>
       <CardContent>
         <Grid container spacing={3} alignItems="center" justify="center">
           <Grid item xs={11} sm={11}>
-            <p className="user-typing">
+            {/* <p className="user-typing">
               {isTyping && 'User is typing...'}
-            </p>
+            </p> */}
             <TextField
               id="message"
               label="Message..."
@@ -47,7 +47,7 @@ ChatSender.propTypes = {
   message: PropTypes.string.isRequired,
   send: PropTypes.func.isRequired,
   handleOnMessageChange: PropTypes.func.isRequired,
-  isTyping: PropTypes.func.isRequired,
+  // isTyping: PropTypes.func.isRequired,
   sendAvailable: PropTypes.bool.isRequired,
 };
 
