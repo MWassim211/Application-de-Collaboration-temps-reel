@@ -6,8 +6,8 @@ import Peer from 'peerjs';
 import ConnexionForm from './ConnexionForm';
 
 const peer = new Peer({
-  host: 'localhost',
-  port: 3000,
+  host: 'tiw8-chat.herokuapp.com',
+  // port: 3000,
   path: '/mypeer',
   debug: 2,
 });
