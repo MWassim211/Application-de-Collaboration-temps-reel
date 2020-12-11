@@ -12,8 +12,6 @@ const peer = new Peer({
   debug: 2,
 });
 
-// navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-
 function Video() {
   const [senderId, setSenderId] = useState('');
   const [receiverId, setReceiverId] = useState('');
