@@ -11,6 +11,7 @@ import ConnexionForm from './ConnexionForm';
 
 const peer = new Peer({
   host: 'tiw8-chat.herokuapp.com',
+  // host: 'localhost',
   // port: 3000,
   path: '/mypeer',
   debug: 2,
@@ -33,7 +34,6 @@ function Chat() {
     peer.on('connection', (receivedConnexion) => {
       console.log('done ! ');
       setConnectedToRemote(true);
-      console.log(connectedToRemote);
       console.log('normelement en true;');
       receivedConnexion.on('data', (data) => {
         setMessagesList((oldArray) => [...oldArray, data]);
@@ -56,7 +56,7 @@ function Chat() {
 
   const hangup = () => {
     peer.disconnect();
-    setStart(false);
+    setStart(true);
   };
 
   const handleStartClick = () => {

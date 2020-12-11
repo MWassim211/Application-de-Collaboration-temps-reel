@@ -6,6 +6,7 @@ import Peer from 'peerjs';
 import ConnexionForm from './ConnexionForm';
 
 const peer = new Peer({
+  // host: 'localhost',
   host: 'tiw8-chat.herokuapp.com',
   // port: 3000,
   path: '/mypeer',
@@ -26,42 +27,57 @@ function Video() {
 
   peer.on('open', (id) => {
     setSenderId(id);
-    peer.on('connection', (receivedConnexion) => {
-      console.log('connexion ! ');
-      console.log(receivedConnexion);
-      setCall(true);
-    });
-  });
+    // peer.on('connection', (receivedConnexion) => {
+    //   console.log('connexion ! ');
+    //   console.log(receivedConnexion);
+    //   setCall(true);
+    // });
+    peer.on('call', (call) => {
+      console.log('on call');
 
-  peer.on('call', (callReceived) => {
-    console.log('on call');
-    localCallRef.current = callReceived;
-    console.log(localCallRef.current);
+      console.log(localCallRef.current);
 
-    callReceived.answer(localStreamRef.current);
+      call.answer(localStreamRef.current);
 
-    callReceived.on('stream', (remoteStream) => {
-      remoteVideoRef.current.srcObject = remoteStream;
-    });
-  });
+      localCallRef.current = call;
+      localCallRef.current.peerConnection.onconnectionstatechange = () => {
+        const state = localCallRef.current.peerConnection.connectionState;
+        console.log(`state : ${state}`);
+        if (state === 'disconnected' || state === 'failed') {
+          localCallRef.current.close();
+        }
+        if (state === 'closed') console.log('closed on call');
+      };
 
-  peer.on('close', () => {
-    console.log('WTF');
-    if (localStreamRef.current) {
-      localStreamRef.current.getTracks().forEach((track) => {
-        track.stop();
+      localCallRef.current.on('stream', (remoteStream) => {
+        console.log('on stream');
+        remoteVideoRef.current.srcObject = remoteStream;
+
+        localCallRef.current.on('close', () => {
+          console.log('on close call received');
+          remoteStream.getTracks().forEach((track) => {
+            console.log('remote stream on call');
+            track.stop();
+          });
+        });
       });
-    }
+    });
   });
 
   const gotStream = (stream) => {
+    // // eslint-disable-next-line no-param-reassign
+    // stream.onremovetrack = () => console.log('removetrack local?');
+    // // eslint-disable-next-line no-param-reassign
+    // stream.oninactive = () => console.log('inactive local?');
+    console.log('local stream');
+    console.log(stream);
     localStreamRef.current = stream;
     localVideoRef.current.srcObject = stream;
-    // setCall(true);
+
+    setCall(true);
   };
 
   const start = () => {
-    peer.connect(receiverId);
     setStart(false);
     setHangup(true);
     navigator.mediaDevices
@@ -75,19 +91,12 @@ function Video() {
 
   const hangup = () => {
     console.log('hangup');
-    // localCallRef.current.close();
     console.log(localCallRef.current);
 
-    if (localCallRef.current) {
-      console.log('closing local');
-      localCallRef.current.close();
-    }
-
-    // if (localStreamRef.current) {
-    //   localStreamRef.current.getTracks().forEach((track) => {
-    //     track.stop();
-    //   });
-    // }
+    localCallRef.current.close();
+    localStreamRef.current.getTracks().forEach((track) => {
+      track.stop();
+    });
 
     // peer.disconnect();
     setStart(true);
@@ -99,10 +108,26 @@ function Video() {
     if (callAvailable) {
       console.log("i'm calling");
       localCallRef.current = peer.call(receiverId, localStreamRef.current);
+      localCallRef.current.peerConnection.onconnectionstatechange = () => {
+        const state = localCallRef.current.peerConnection.connectionState;
+        console.log(`state : ${state}`);
+        if (state === 'disconnected' || state === 'failed') {
+          localCallRef.current.close();
+        }
+        if (state === 'closed') console.log('closed ');
+      };
       console.log(localCallRef.current);
       localCallRef.current.on('stream', (remoteStream) => {
         console.log('on stream local');
         remoteVideoRef.current.srcObject = remoteStream;
+
+        localCallRef.current.on('close', () => {
+          console.log('on close call');
+          remoteStream.getTracks().forEach((track) => {
+            console.log('remote stram close');
+            track.stop();
+          });
+        });
       });
     }
   };
