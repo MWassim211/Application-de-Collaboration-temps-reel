@@ -4,7 +4,7 @@ import {
 } from '@material-ui/core';
 import Peer from 'peerjs';
 import debounce from 'lodash/debounce';
-import MessageLists from './MessagesList';
+import MessagesList from './MessagesList';
 import ChatSender from './ChatSender';
 import InProgressConnection from './InProgressConnection';
 import ConnexionForm from './ConnexionForm';
@@ -32,16 +32,13 @@ function Chat() {
   peer.on('open', (id) => {
     setSenderId(id);
     peer.on('connection', (receivedConnexion) => {
-      console.log('done ! ');
       setConnectedToRemote(true);
-      console.log('normelement en true;');
       receivedConnexion.on('data', (data) => {
         setMessagesList((oldArray) => [...oldArray, data]);
       });
     });
   });
 
-  // Start Connection
   const start = () => {
     conn = peer.connect(receiverId);
     setStart(false);
@@ -99,7 +96,7 @@ function Chat() {
       {((connexionStarted || connectedToRemote) && !(connexionStarted && connectedToRemote)
        && <InProgressConnection />) }
 
-      {connectedToRemote && connexionStarted && (<MessageLists messages={messages} />)}
+      {connectedToRemote && connexionStarted && (<MessagesList messages={messages} />)}
 
       {connectedToRemote && connexionStarted && (
       <ChatSender
