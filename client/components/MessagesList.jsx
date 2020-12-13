@@ -38,7 +38,7 @@ function MessagesList(props) {
   return (
     <Card style={{ height: '70vh', overflow: 'scroll' }}>
       <CardContent>
-        <Grid contcainer className={classes.root} spacing={2} direction="column">
+        <Grid container className={classes.root} spacing={2} direction="column">
           {messages.map((message) => (
             <Grid item width="100%">
               <Box display="flex" justifyContent={message.owner ? 'flex-end' : 'flex-start'}>

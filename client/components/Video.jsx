@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import {
-  Box, IconButton, Grid,
+  Box, IconButton, Grid, Card, CardContent, Button,
 } from '@material-ui/core';
 import Peer from 'peerjs';
 import debounce from 'lodash/debounce';
@@ -11,9 +11,9 @@ import ChatSender from './ChatSender';
 import InProgressConnection from './InProgressConnection';
 
 const peer = new Peer({
-  // host: 'localhost',
-  host: 'tiw8-chat.herokuapp.com',
-  // port: 3000,
+  host: 'localhost',
+  // host: 'tiw8-chat.herokuapp.com',
+  port: 3000,
   path: '/mypeer',
   debug: 2,
 });
@@ -90,7 +90,7 @@ function Video() {
 
     navigator.mediaDevices
       .getUserMedia({
-        audio: true,
+        // audio: true,
         video: true,
       })
       .then(gotStream)
@@ -161,6 +161,16 @@ function Video() {
             receiverChanged={handleOnReceiverIdChange}
           />
           )}
+          <Card>
+            <CardContent>
+              <Button>
+                HANG UP
+              </Button>
+              <IconButton>
+                <CallIcon />
+              </IconButton>
+            </CardContent>
+          </Card>
           {((connexionStarted || connectedToRemote) && !(connexionStarted && connectedToRemote)
             && <InProgressConnection />) }
 

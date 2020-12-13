@@ -10,6 +10,7 @@ function ConnexionForm(props) {
     senderId, receiverId, isSmall,
     start, startClick, hangupClick, senderChanged, receiverChanged,
   } = props;
+
   const clipboardCopy = (e) => {
     const textField = document.getElementById('sender');
     textField.select();

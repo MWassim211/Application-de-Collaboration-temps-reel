@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom';
 import DataChat from './components/DataChat';
 import HomePage from './components/HomePage';
-import Video from './components/Video';
+import VideoChat from './components/VideoChat';
 
 const Index = () => (
   <Router>
@@ -20,7 +20,7 @@ const Index = () => (
           <DataChat />
         </Route>
         <Route exact path="/video">
-          <Video />
+          <VideoChat />
         </Route>
       </Switch>
     </div>
