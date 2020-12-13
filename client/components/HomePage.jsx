@@ -1,11 +1,95 @@
 import React from 'react';
+import DuoIcon from '@material-ui/icons/Duo';
+import ChatIcon from '@material-ui/icons/Chat';
+import Box from '@material-ui/core/Box';
+import { withRouter } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
+import {
+  // eslint-disable-next-line no-unused-vars
+  TextField, IconButton, Card, CardContent, Grid, InputAdornment, Button,
+} from '@material-ui/core';
 
-function HomePage() {
+const useStyles = makeStyles(() => ({
+  cards: {
+    display: 'block',
+    width: '15vw',
+    transitionDuration: '0.3s',
+    height: '15vw',
+  },
+  largeIcon: {
+    '& svg': {
+      fontSize: 120,
+    },
+  },
+}));
+
+function HomePage(props) {
+  const classes = useStyles();
+  const handleOnChatClick = () => {
+    props.history.push('/chat');
+  };
+  const handleOnVideoClick = () => {
+    props.history.push('/video');
+  };
   return (
     <div>
-      <p> </p>
+      <Grid container spacing={3} alignItems="center" justify="center">
+        <Grid container spacing={3} alignItems="center" justify="center">
+          <Grid item>
+            <Card className={classes.cards}>
+              <CardContent>
+                <Grid container spacing={3} alignItems="center" justify="center">
+                  <Grid item>
+                    <Box justifyContent="center">
+                      <IconButton className={classes.largeIcon}>
+                        <DuoIcon />
+                      </IconButton>
+                    </Box>
+                  </Grid>
+                  <Grid item>
+                    <Box justifyContent="center">
+                      <Button variant="contained" color="secondary" size="large" fullWidth onClick={handleOnVideoClick}>
+                        Video call
+                      </Button>
+                    </Box>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item>
+            <Card className={classes.cards}>
+              <CardContent alignItems="center" justify="center">
+                <Grid container spacing={3} alignItems="center" justify="center">
+                  <Grid item>
+                    <Box justifyContent="center">
+                      <IconButton className={classes.largeIcon}>
+                        <ChatIcon />
+                      </IconButton>
+                    </Box>
+                  </Grid>
+                  <Grid item>
+                    <Box justifyContent="center">
+                      <Button variant="contained" color="secondary" size="large" fullWidth onClick={handleOnChatClick}>
+                        Chat descussion
+                      </Button>
+                    </Box>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </Grid>
     </div>
   );
 }
 
-export default HomePage;
+HomePage.propTypes = {
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
+};
+
+export default withRouter(HomePage);

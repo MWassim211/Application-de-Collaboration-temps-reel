@@ -12,8 +12,10 @@ import Video from './components/Video';
 const Index = () => (
   <Router>
     <div className="container">
-      <HomePage />
       <Switch>
+        <Route exact path="/">
+          <HomePage />
+        </Route>
         <Route exact path="/chat">
           <DataChat />
         </Route>

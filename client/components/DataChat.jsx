@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Container,
 } from '@material-ui/core';
@@ -10,9 +10,9 @@ import InProgressConnection from './InProgressConnection';
 import ConnexionForm from './ConnexionForm';
 
 const peer = new Peer({
-  host: 'tiw8-chat.herokuapp.com',
-  // host: 'localhost',
-  // port: 3000,
+  // host: 'tiw8-chat.herokuapp.com',
+  host: 'localhost',
+  port: 3000,
   path: '/mypeer',
   debug: 2,
 });
@@ -28,7 +28,17 @@ function Chat() {
   const [connectedToRemote, setConnectedToRemote] = useState(false);
   const [connexionStarted, setConnexionStarted] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const localCallRef = useRef(null);
 
+  const onConnectionStateChange = () => {
+    localCallRef.current.peerConnection.onconnectionstatechange = () => {
+      const state = localCallRef.current.peerConnection.connectionState;
+      console.log(`state : ${state}`);
+      if (state === 'disconnected' || state === 'failed') {
+        localCallRef.current.close();
+      }
+    };
+  };
   peer.on('open', (id) => {
     setSenderId(id);
     peer.on('connection', (receivedConnexion) => {
@@ -36,11 +46,17 @@ function Chat() {
       receivedConnexion.on('data', (data) => {
         setMessagesList((oldArray) => [...oldArray, data]);
       });
+      localCallRef.current = receivedConnexion;
+      onConnectionStateChange();
     });
   });
 
   const start = () => {
     conn = peer.connect(receiverId);
+    console.log("l'objet connnexion");
+    console.log(conn);
+    localCallRef.current = conn;
+    onConnectionStateChange();
     setStart(false);
     setConnexionStarted(true);
   };
@@ -52,8 +68,12 @@ function Chat() {
   };
 
   const hangup = () => {
+    localCallRef.current.close();
     peer.disconnect();
     setStart(true);
+    setConnectedToRemote(false);
+    setConnexionStarted(false);
+    setReceiverId('');
   };
 
   const handleStartClick = () => {
