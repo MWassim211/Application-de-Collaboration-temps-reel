@@ -6,8 +6,7 @@ import { withRouter } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import {
-  // eslint-disable-next-line no-unused-vars
-  TextField, IconButton, Card, CardContent, Grid, InputAdornment, Button,
+  IconButton, Card, CardContent, Grid, Button,
 } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({

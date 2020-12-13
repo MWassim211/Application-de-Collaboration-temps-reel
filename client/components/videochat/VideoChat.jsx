@@ -2,15 +2,15 @@ import React, { useRef, useState, useEffect } from 'react';
 import Peer from 'peerjs';
 import PropTypes from 'prop-types';
 import {
-  Box, Grid, Button,
-  Dialog, DialogContent, DialogContentText, DialogActions, IconButton, Typography,
+  Box, Grid, Button, IconButton, Typography,
+  Dialog, DialogContent, DialogContentText, DialogActions,
 } from '@material-ui/core';
 import { green, red } from '@material-ui/core/colors';
 import { Call, CallEnd } from '@material-ui/icons';
-import config from '../config/PeerConfig';
-import Chat from './chat/Chat';
-import '../assets/Dots.css';
-import Ringtone from '../assets/ringtone_minimal.wav';
+import config from '../../config/PeerConfig';
+import Chat from './Chat';
+import '../../assets/Dots.css';
+import Ringtone from '../../assets/ringtone_minimal.wav';
 
 function CallingDialog({ open, caller, handleAnswer }) {
   const ring = new Audio(Ringtone);
@@ -48,11 +48,10 @@ function CallingDialog({ open, caller, handleAnswer }) {
   );
 }
 
-function Error({ open, message }) {
-  const [isOpen, setOpen] = useState(open);
+function Error({ open, setOpen, message }) {
   const handleClose = () => { setOpen(false); };
   return (
-    <Dialog open={isOpen} onClose={handleClose}>
+    <Dialog open={open} onClose={handleClose}>
       <DialogContent>
         <DialogContentText>
           {message}
@@ -81,6 +80,9 @@ function VideoChat() {
   const [messages, setMessagesList] = useState([]);
   const [message, setMessage] = useState('');
   const [open, setOpen] = useState(false);
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
   const [connecting, setConnecting] = useState(false);
 
   const localVideoRef = useRef();
@@ -102,12 +104,9 @@ function VideoChat() {
   const onConnectionStateChange = () => {
     callRef.current.peerConnection.onconnectionstatechange = () => {
       const state = callRef.current.peerConnection.connectionState;
-      console.log(`state : ${state}`);
 
       if (state === 'connected') { setConnecting(false); }
-      if (state === 'disconnected' || state === 'failed') {
-        hangup();
-      }
+      if (state === 'disconnected' || state === 'failed') { hangup(); }
     };
   };
 
@@ -129,7 +128,7 @@ function VideoChat() {
   const getMedia = (func) => {
     navigator.mediaDevices
       .getUserMedia({
-        // audio: true,
+        audio: true,
         video: true,
       })
       .then((stream) => {
@@ -140,7 +139,8 @@ function VideoChat() {
         setCall(false);
       })
       .catch((e) => {
-        console.log(e); alert(`getUserMedia() error:${e.name}`);
+        setErrorMessage(`getUserMedia() error:${e.name}`);
+        setError(true);
       });
   };
 
@@ -174,7 +174,6 @@ function VideoChat() {
   };
 
   const handleAnswer = (ans) => {
-    console.log(ans);
     setOpen(false);
     if (ans) {
       getMedia(() => callRef.current.answer(localStreamRef.current));
@@ -186,16 +185,12 @@ function VideoChat() {
 
   peer.on('open', (id) => {
     setSenderId(id);
-    console.log(`My id ${id}`);
     peer.on('connection', (receivedConnexion) => {
       setConnectedToRemote(true);
       setCall(true);
       receivedConnexion.on('data', (data) => {
-        if (data === 'call-refused') {
-          hangup();
-        } else {
-          setMessagesList((oldArray) => [...oldArray, data]);
-        }
+        if (data === 'call-refused') hangup();
+        else setMessagesList((oldArray) => [...oldArray, data]);
       });
 
       receivedConnexion.on('close', () => {
@@ -209,12 +204,9 @@ function VideoChat() {
     });
   });
 
-  peer.on('error', (error) => {
-    console.log(error.type);
-  });
-
   return (
     <Box height={1} width={1} position="fixed">
+      {error && <Error open={error} setOpen={setError} message={errorMessage} />}
       <Grid container spacing={1} style={{ height: '100%' }}>
         <Grid item sm={3} lg={3}>
           <Chat
@@ -271,33 +263,10 @@ function VideoChat() {
 }
 
 export default VideoChat;
-// const {
-//   senderId, receiverId,
-//   start, stop, call, hangup, setSenderId, setReceiverId,
-//   connectionStarted, callAvailable, connectedToRemote,
-//   messages,
-// } = props;
-
-// VideoChat.propTypes = {
-//   senderId: PropTypes.string.isRequired,
-//   receiverId: PropTypes.string.isRequired,
-//   start: PropTypes.func.isRequired,
-//   stop: PropTypes.func.isRequired,
-//   call: PropTypes.func.isRequired,
-//   hangup: PropTypes.func.isRequired,
-//   setSenderId: PropTypes.func.isRequired,
-//   setReceiverId: PropTypes.func.isRequired,
-//   connectionStarted: PropTypes.bool.isRequired,
-//   callAvailable: PropTypes.bool.isRequired,
-//   connectedToRemote: PropTypes.bool.isRequired,
-//   messages: PropTypes.arrayOf(PropTypes.shape({
-//     owner: PropTypes.bool.isRequired,
-//     text: PropTypes.string.isRequired,
-//   })).isRequired,
-// };
 
 Error.propTypes = {
   open: PropTypes.bool.isRequired,
+  setOpen: PropTypes.func.isRequired,
   message: PropTypes.string.isRequired,
 };
 

@@ -1,15 +1,10 @@
-/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
-import {
-  Container,
-} from '@material-ui/core';
 import Peer from 'peerjs';
 import MessagesList from './MessagesList';
 import ChatSender from './ChatSender';
 import InProgressConnection from './InProgressConnection';
 import ConnexionForm from './ConnexionForm';
-import Backgroundroot from '../assets/whatsupbg.png';
-import config from '../config/PeerConfig';
+import config from '../../config/PeerConfig';
 
 const peer = new Peer(config);
 
@@ -28,17 +23,14 @@ function Chat() {
   const [isTyping, setIsTyping] = useState(false);
 
   const hangup = () => {
-    // peer.disconnect();
     conn.close();
     setStart(true);
     setConnectedToRemote(false);
     setConnexionStarted(false);
     setReceiverId('');
-    console.log(conn);
   };
 
   peer.on('open', (id) => {
-    console.log('init');
     setSenderId(id);
     peer.on('connection', (receivedConnexion) => {
       setConnectedToRemote(true);
@@ -54,7 +46,6 @@ function Chat() {
 
   const start = () => {
     conn = peer.connect(receiverId);
-    console.log(conn);
     setStart(false);
     setConnexionStarted(true);
   };
@@ -90,12 +81,6 @@ function Chat() {
   };
 
   return (
-    // <Container
-    //   disableGutters
-    //   style={{
-    //     background: `url(${Backgroundroot})`,
-    //   }}
-    // >
     <div>
       <ConnexionForm
         senderId={senderId}
@@ -111,7 +96,6 @@ function Chat() {
       {((connexionStarted || connectedToRemote) && !(connexionStarted && connectedToRemote)
        && <InProgressConnection />) }
 
-      {console.log(connectedToRemote && connexionStarted)}
       {connectedToRemote && connexionStarted && (<MessagesList messages={messages} />)}
 
       {connectedToRemote && connexionStarted && (
@@ -123,7 +107,6 @@ function Chat() {
       />
       )}
     </div>
-  // </Container>
   );
 }
 

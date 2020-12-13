@@ -1,10 +1,7 @@
 import React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles } from '@material-ui/core/styles';
-import {
-  // eslint-disable-next-line no-unused-vars
-  Box, Card, CardContent, Grid, Typography,
-} from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
   circularpgs: {

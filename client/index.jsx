@@ -5,9 +5,9 @@ import {
   Route,
   Switch,
 } from 'react-router-dom';
-import DataChat from './components/DataChat';
+import DataChat from './components/datachat/DataChat';
 import HomePage from './components/HomePage';
-import VideoChat from './components/VideoChat';
+import VideoChat from './components/videochat/VideoChat';
 
 const Index = () => (
   <Router>

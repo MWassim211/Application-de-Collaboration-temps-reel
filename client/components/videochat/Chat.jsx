@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Box } from '@material-ui/core';
 import ChatActions from './ChatActions';
 import ChatMessages from './ChatMessages';
-import InProgressConnection from '../InProgressConnection';
+import InProgressConnection from '../datachat/InProgressConnection';
 
 function Chat(props) {
   const {

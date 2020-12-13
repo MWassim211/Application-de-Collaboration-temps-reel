@@ -4,9 +4,7 @@ import {
   Box, Card, CardContent, Grid, Typography,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import Background from '../assets/whatsupbg.png';
-
-// import Backgroundroot from '../assets/whatsupbg.png';
+import Background from '../../assets/whatsupbg.png';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -48,10 +46,6 @@ function MessagesList(props) {
           {messages.map((message) => (
             <Grid item width="100%">
               <Box display="flex" justifyContent={message.owner ? 'flex-end' : 'flex-start'}>
-                {/* <p><small>moi</small></p>
-                <Typography gutterBottom display="inline">
-                  {message.owner ? < : 'Remote'}
-                </Typography> */}
                 <Box
                   m={1}
                   pl={2}
