@@ -11,7 +11,7 @@ import Background from '../../assets/whatsupbg.png';
 const useStyles = makeStyles(() => ({
   card: {
     overflow: 'scroll',
-    height: '100%',
+    height: '80vh',
     maxHeight: '80vh',
     background: `url(${Background})`,
   },

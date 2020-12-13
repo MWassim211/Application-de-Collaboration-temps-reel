@@ -1,13 +1,14 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import {
   Container,
 } from '@material-ui/core';
 import Peer from 'peerjs';
-import debounce from 'lodash/debounce';
 import MessagesList from './MessagesList';
 import ChatSender from './ChatSender';
 import InProgressConnection from './InProgressConnection';
 import ConnexionForm from './ConnexionForm';
+import Backgroundroot from '../assets/whatsupbg.png';
 
 const peer = new Peer({
   // host: 'tiw8-chat.herokuapp.com',
@@ -23,37 +24,52 @@ function Chat() {
   const [messages, setMessagesList] = useState([]);
   const [message, setMessage] = useState('');
   const [startAvailable, setStart] = useState(true);
+
+  const [startDisable, setStartDisable] = useState(true);
   const [senderId, setSenderId] = useState('');
   const [receiverId, setReceiverId] = useState('');
   const [connectedToRemote, setConnectedToRemote] = useState(false);
   const [connexionStarted, setConnexionStarted] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
 
+  const hangup = () => {
+    // peer.disconnect();
+    conn.close();
+    setStart(true);
+    setConnectedToRemote(false);
+    setConnexionStarted(false);
+    setReceiverId('');
+    console.log(conn);
+  };
+
   peer.on('open', (id) => {
+    console.log('init');
     setSenderId(id);
     peer.on('connection', (receivedConnexion) => {
       setConnectedToRemote(true);
       receivedConnexion.on('data', (data) => {
         setMessagesList((oldArray) => [...oldArray, data]);
       });
+
+      receivedConnexion.on('close', () => {
+        hangup();
+      });
     });
   });
 
   const start = () => {
     conn = peer.connect(receiverId);
+    console.log(conn);
     setStart(false);
     setConnexionStarted(true);
   };
 
   const send = (messageText) => {
-    setMessagesList((oldArray) => [...oldArray, { owner: true, text: messageText }]);
-    conn.send({ owner: false, text: messageText });
-    setMessage(' ');
-  };
-
-  const hangup = () => {
-    peer.disconnect();
-    setStart(true);
+    if (messageText !== '') {
+      setMessagesList((oldArray) => [...oldArray, { owner: true, text: messageText }]);
+      conn.send({ owner: false, text: messageText });
+      setMessage('');
+    }
   };
 
   const handleStartClick = () => {
@@ -70,23 +86,27 @@ function Chat() {
 
   const handleOnReceiverIdChange = (e) => {
     setReceiverId(e.target.value);
+    setStartDisable(false);
   };
-  const handleTyping = debounce(() => {
-    setIsTyping(false);
-  }, 500);
 
   const handleOnMessageChange = (e) => {
     setMessage(e.target.value);
     setIsTyping(true);
-    handleTyping();
   };
 
   return (
-    <Container disableGutters>
+    // <Container
+    //   disableGutters
+    //   style={{
+    //     background: `url(${Backgroundroot})`,
+    //   }}
+    // >
+    <div>
       <ConnexionForm
         senderId={senderId}
         receiverId={receiverId}
         start={startAvailable}
+        startDisable={startDisable}
         startClick={handleStartClick}
         hangupClick={handleHangUpClick}
         senderChanged={handleOnSenderIdChange}
@@ -96,6 +116,7 @@ function Chat() {
       {((connexionStarted || connectedToRemote) && !(connexionStarted && connectedToRemote)
        && <InProgressConnection />) }
 
+      {console.log(connectedToRemote && connexionStarted)}
       {connectedToRemote && connexionStarted && (<MessagesList messages={messages} />)}
 
       {connectedToRemote && connexionStarted && (
@@ -106,8 +127,8 @@ function Chat() {
         handleOnMessageChange={handleOnMessageChange}
       />
       )}
-
-    </Container>
+    </div>
+  // </Container>
   );
 }
 

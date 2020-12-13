@@ -1,6 +1,10 @@
 import React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles } from '@material-ui/core/styles';
+import {
+  // eslint-disable-next-line no-unused-vars
+  Box, Card, CardContent, Grid, Typography,
+} from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
   circularpgs: {
@@ -8,6 +12,15 @@ const useStyles = makeStyles(() => ({
     right: '50%',
     top: '50%',
     bottom: '50%',
+    height: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cmpt: {
+    textAlign: 'center',
+
   },
 }));
 
@@ -15,8 +28,10 @@ function InProgressConnection() {
   const classes = useStyles();
   return (
     <div className={classes.circularpgs}>
-      <p>Wainting connection with your remote</p>
-      <CircularProgress />
+      <Grid item xs={12} className={classes.cmpt}>
+        <p>Wainting connection with your remote</p>
+        <CircularProgress />
+      </Grid>
     </div>
   );
 }
