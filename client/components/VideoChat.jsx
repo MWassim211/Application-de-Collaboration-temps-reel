@@ -9,19 +9,16 @@ import { Call, CallEnd } from '@material-ui/icons';
 import config from '../config/PeerConfig';
 import Chat from './chat/Chat';
 
-function CallingDialog({ caller, handleAnswer }) {
-  const [isOpen, setOpen] = useState(true);
+function CallingDialog({ open, caller, handleAnswer }) {
   const handleClose = () => {
-    setOpen(false);
     handleAnswer(false);
   };
   const handleAction = (action) => {
-    setOpen(false);
     handleAnswer(action);
   };
 
   return (
-    <Dialog open={isOpen} onClose={handleClose}>
+    <Dialog open={open} onClose={handleClose}>
       <DialogContent>
         <DialogContentText>
           {caller}
@@ -73,6 +70,7 @@ function VideoChat() {
 
   const [messages, setMessagesList] = useState([]);
   const [message, setMessage] = useState('');
+  const [open, setOpen] = useState(false);
 
   const localVideoRef = useRef();
   const remoteVideoRef = useRef();
@@ -81,6 +79,12 @@ function VideoChat() {
 
   const stopTracks = (stream) => {
     stream.getTracks().forEach((track) => track.stop());
+  };
+
+  const hangup = () => {
+    callRef.current.close();
+    if (localStreamRef.current) { stopTracks(localStreamRef.current); }
+    setCall(true);
   };
 
   const onConnectionStateChange = () => {
@@ -97,12 +101,17 @@ function VideoChat() {
           break;
         case 'disconnected':
         case 'failed':
-          callRef.current.close();
+          hangup();
           break;
         default:
           break;
       }
     };
+  };
+
+  const gotStream = (stream) => {
+    localStreamRef.current = stream;
+    localVideoRef.current.srcObject = stream;
   };
 
   const onStream = () => {
@@ -115,34 +124,23 @@ function VideoChat() {
     });
   };
 
-  // const handleAnswer = (answer) => {
-  //   console.log(answer);
-  // };
-
-  peer.on('open', (id) => {
-    setSenderId(id);
-
-    peer.on('connection', (receivedConnexion) => {
-      setConnectedToRemote(true);
-      setCall(true);
-      receivedConnexion.on('data', (data) => {
-        setMessagesList((oldArray) => [...oldArray, data]);
+  const getMedia = (func) => {
+    navigator.mediaDevices
+      .getUserMedia({
+        // audio: true,
+        video: true,
+      })
+      .then((stream) => {
+        gotStream(stream);
+        func();
+        onConnectionStateChange();
+        onStream();
+        setCall(false);
+      })
+      .catch((e) => {
+        console.log(e); alert(`getUserMedia() error:${e.name}`);
       });
-    });
-
-    peer.on('call', (receivedCall) => {
-      <CallingDialog caller={receiverId} />;
-      receivedCall.answer(localStreamRef.current);
-      callRef.current = receivedCall;
-
-      onConnectionStateChange();
-      onStream();
-    });
-  });
-
-  peer.on('error', (error) => {
-    console.log(error.type);
-  });
+  };
 
   const start = () => {
     conn = peer.connect(receiverId);
@@ -166,26 +164,40 @@ function VideoChat() {
   };
 
   const call = () => {
-    navigator.mediaDevices
-      .getUserMedia({
-        // audio: true,
-        video: true,
-      })
-      .then((stream) => {
-        localStreamRef.current = stream;
-        localVideoRef.current.srcObject = stream;
-        callRef.current = peer.call(receiverId, localStreamRef.current);
-      })
-      .catch((e) => {
-        console.log(e); alert(`getUserMedia() error:${e.name}`);
-      });
+    getMedia(() => { callRef.current = peer.call(receiverId, localStreamRef.current); });
   };
 
-  const hangup = () => {
-    localStreamRef.current.close();
-    stopTracks(localStreamRef.current);
-    setCall(false);
+  const handleAnswer = (ans) => {
+    console.log(ans);
+    setOpen(false);
+    if (ans) {
+      getMedia(() => callRef.current.answer(localStreamRef.current));
+    } else {
+      hangup();
+      conn.send('call-refused');
+    }
   };
+
+  peer.on('open', (id) => {
+    setSenderId(id);
+
+    peer.on('connection', (receivedConnexion) => {
+      setConnectedToRemote(true);
+      setCall(true);
+      receivedConnexion.on('data', (data) => {
+        if (data === 'call-refused') { hangup(); } else { setMessagesList((oldArray) => [...oldArray, data]); }
+      });
+    });
+
+    peer.on('call', (receivedCall) => {
+      callRef.current = receivedCall;
+      setOpen(true);
+    });
+  });
+
+  peer.on('error', (error) => {
+    console.log(error.type);
+  });
 
   return (
     <Box height={1} width={1} position="fixed">
@@ -212,6 +224,7 @@ function VideoChat() {
           />
         </Grid>
         <Grid item sm={9} lg={9}>
+          <CallingDialog open={open} caller={receiverId} handleAnswer={handleAnswer} />
           <Box height={1} width={1} position="relative">
             <Box p={2}>
               <video ref={remoteVideoRef} autoPlay style={{ width: '100%', maxHeight: '100%' }}>
@@ -262,6 +275,7 @@ Error.propTypes = {
 };
 
 CallingDialog.propTypes = {
+  open: PropTypes.bool.isRequired,
   caller: PropTypes.string.isRequired,
   handleAnswer: PropTypes.func.isRequired,
 };
