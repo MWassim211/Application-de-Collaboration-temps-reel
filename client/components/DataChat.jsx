@@ -9,14 +9,9 @@ import ChatSender from './ChatSender';
 import InProgressConnection from './InProgressConnection';
 import ConnexionForm from './ConnexionForm';
 import Backgroundroot from '../assets/whatsupbg.png';
+import config from '../config/PeerConfig';
 
-const peer = new Peer({
-  // host: 'tiw8-chat.herokuapp.com',
-  host: 'localhost',
-  port: 3000,
-  path: '/mypeer',
-  debug: 2,
-});
+const peer = new Peer(config);
 
 let conn = null;
 

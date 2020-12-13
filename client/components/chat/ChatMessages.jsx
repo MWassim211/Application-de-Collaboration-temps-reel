@@ -50,7 +50,7 @@ function ChatMessages(props) {
         <Grid item style={{ height: '90%', width: '100%' }}>
           <Card className={classes.card}>
             <CardContent>
-              <Grid container className={classes.grid} spacing={2} direction="column">
+              <Grid container className={classes.grid} spacing={0} direction="column">
                 {messages.map((messageItem) => (
                   <Grid item xs={12} sm={12} lg={12}>
                     <Box display="flex" justifyContent={messageItem.owner ? 'flex-end' : 'flex-start'}>

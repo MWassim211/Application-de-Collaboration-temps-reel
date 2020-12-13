@@ -22,6 +22,7 @@ function CallingDialog({ open, caller, handleAnswer }) {
   };
   useEffect(() => {
     if (open) ring.play();
+    else ring.pause();
   });
 
   return (
