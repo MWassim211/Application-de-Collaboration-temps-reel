@@ -116,7 +116,7 @@ function VideoChat() {
   };
 
   const handleAnswer = (answer) => {
-
+    console.log(answer);
   };
 
   peer.on('open', (id) => {
@@ -131,7 +131,7 @@ function VideoChat() {
     });
 
     peer.on('call', (receivedCall) => {
-      <CallingDialog />;
+      <CallingDialog caller={receiverId} />;
       receivedCall.answer(localStreamRef.current);
       callRef.current = receivedCall;
 

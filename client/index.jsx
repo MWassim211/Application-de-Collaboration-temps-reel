@@ -5,7 +5,7 @@ import {
   Route,
   Switch,
 } from 'react-router-dom';
-import DataChat from './components/DataChat';
+import DataChat1 from './components/DataChat1';
 import HomePage from './components/HomePage';
 import VideoChat from './components/VideoChat';
 
@@ -15,7 +15,7 @@ const Index = () => (
       <HomePage />
       <Switch>
         <Route exact path="/chat">
-          <DataChat />
+          <DataChat1 />
         </Route>
         <Route exact path="/video">
           <VideoChat />
