@@ -115,9 +115,9 @@ function VideoChat() {
     });
   };
 
-  const handleAnswer = (answer) => {
-    console.log(answer);
-  };
+  // const handleAnswer = (answer) => {
+  //   console.log(answer);
+  // };
 
   peer.on('open', (id) => {
     setSenderId(id);

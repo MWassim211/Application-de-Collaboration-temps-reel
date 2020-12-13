@@ -4,6 +4,9 @@ import {
   Box, Card, CardContent, Grid, Typography,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
+import Background from '../assets/whatsupbg.png';
+
+// import Backgroundroot from '../assets/whatsupbg.png';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -13,12 +16,12 @@ const useStyles = makeStyles(() => ({
     height: '100%',
   },
   sender: {
-    background: '#8292ab',
-    color: 'white',
+    background: '#DCF8C6',
+    color: 'black',
   },
   receiver: {
-    background: '#9ea0a3',
-    color: 'white',
+    background: 'white',
+    color: 'black',
   },
 }));
 
@@ -36,12 +39,19 @@ function MessagesList(props) {
   });
 
   return (
-    <Card style={{ height: '70vh', overflow: 'scroll' }}>
+    <Card style={{
+      height: 'calc(100vh - 196px)', overflowY: 'scroll', backgroundColor: '#D3D3D3', background: `url(${Background})`,
+    }}
+    >
       <CardContent>
-        <Grid container className={classes.root} spacing={2} direction="column">
+        <Grid container className={classes.root} spacing={0} direction="column">
           {messages.map((message) => (
             <Grid item width="100%">
               <Box display="flex" justifyContent={message.owner ? 'flex-end' : 'flex-start'}>
+                {/* <p><small>moi</small></p>
+                <Typography gutterBottom display="inline">
+                  {message.owner ? < : 'Remote'}
+                </Typography> */}
                 <Box
                   m={1}
                   pl={2}

@@ -26,14 +26,17 @@ const useStyles = makeStyles(() => ({
 
 function HomePage(props) {
   const classes = useStyles();
+  // eslint-disable-next-line no-unused-vars
   const handleOnChatClick = () => {
     props.history.push('/chat');
+    window.location.reload();
   };
   const handleOnVideoClick = () => {
     props.history.push('/video');
+    window.location.reload();
   };
   return (
-    <div>
+    <Box height="100vh" display="flex" alignItems="center" justifyContent="center">
       <Grid container spacing={3} alignItems="center" justify="center">
         <Grid container spacing={3} alignItems="center" justify="center">
           <Grid item>
@@ -49,7 +52,7 @@ function HomePage(props) {
                   </Grid>
                   <Grid item>
                     <Box justifyContent="center">
-                      <Button variant="contained" color="secondary" size="large" fullWidth onClick={handleOnVideoClick}>
+                      <Button variant="contained" color="secondary" size="large" fullWidth onClick={handleOnVideoClick} style={{ backgroundColor: '#075E54' }}>
                         Video call
                       </Button>
                     </Box>
@@ -71,7 +74,14 @@ function HomePage(props) {
                   </Grid>
                   <Grid item>
                     <Box justifyContent="center">
-                      <Button variant="contained" color="secondary" size="large" fullWidth onClick={handleOnChatClick}>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        size="large"
+                        fullWidth
+                        onClick={handleOnChatClick}
+                        style={{ backgroundColor: '#075E54' }}
+                      >
                         Chat descussion
                       </Button>
                     </Box>
@@ -82,7 +92,7 @@ function HomePage(props) {
           </Grid>
         </Grid>
       </Grid>
-    </div>
+    </Box>
   );
 }
 

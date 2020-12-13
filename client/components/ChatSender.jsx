@@ -9,14 +9,12 @@ function ChatSender(props) {
   const {
     message, send, handleOnMessageChange, sendAvailable,
   } = props;
+
   return (
-    <Card style={{ marginTop: '10px' }}>
+    <Card>
       <CardContent>
         <Grid container spacing={3} alignItems="center" justify="center">
           <Grid item xs={11} sm={11}>
-            {/* <p className="user-typing">
-              {isTyping && 'User is typing...'}
-            </p> */}
             <TextField
               id="message"
               label="Message..."
@@ -31,7 +29,7 @@ function ChatSender(props) {
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton color="primary" component="span" onClick={() => send(message)} disabled={sendAvailable}>
-                      <SendIcon />
+                      <SendIcon style={{ fill: '#075E54' }} />
                     </IconButton>
                   </InputAdornment>),
               }}
@@ -47,7 +45,6 @@ ChatSender.propTypes = {
   message: PropTypes.string.isRequired,
   send: PropTypes.func.isRequired,
   handleOnMessageChange: PropTypes.func.isRequired,
-  // isTyping: PropTypes.func.isRequired,
   sendAvailable: PropTypes.bool.isRequired,
 };
 

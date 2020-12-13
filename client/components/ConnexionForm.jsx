@@ -8,7 +8,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 function ConnexionForm(props) {
   const {
     senderId, receiverId, isSmall,
-    start, startClick, hangupClick, senderChanged, receiverChanged,
+    start, startClick, hangupClick, senderChanged, receiverChanged, startDisable,
   } = props;
 
   const clipboardCopy = (e) => {
@@ -19,7 +19,7 @@ function ConnexionForm(props) {
   };
 
   return (
-    <Card style={{ marginBottom: '10px' }}>
+    <Card>
       <CardContent>
         <Grid container spacing={3} alignItems="center" justify="center">
           <Grid item xs={12} sm={isSmall ? 12 : 5} lg={isSmall ? 12 : 5}>
@@ -54,12 +54,12 @@ function ConnexionForm(props) {
           </Grid>
           <Grid item xs={12} sm={isSmall ? 12 : 2}>
             {start && (
-            <Button variant="contained" color="secondary" size="large" fullWidth onClick={startClick}>
+            <Button variant="contained" color="secondary" size="large" fullWidth onClick={startClick} disabled={startDisable} style={{ backgroundColor: '#075E54' }}>
               Start
             </Button>
             )}
             {!start && (
-            <Button variant="contained" color="secondary" size="large" fullWidth onClick={hangupClick}>
+            <Button variant="contained" color="secondary" size="large" fullWidth onClick={hangupClick} style={{ backgroundColor: '#075E54' }}>
               HangUp
             </Button>
             )}
@@ -84,4 +84,9 @@ ConnexionForm.propTypes = {
   hangupClick: PropTypes.func.isRequired,
   senderChanged: PropTypes.func.isRequired,
   receiverChanged: PropTypes.func.isRequired,
+  startDisable: PropTypes.bool,
+};
+
+ConnexionForm.defaultProps = {
+  startDisable: false,
 };

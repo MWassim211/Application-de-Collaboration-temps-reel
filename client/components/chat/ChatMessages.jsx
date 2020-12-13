@@ -10,7 +10,7 @@ import Send from '@material-ui/icons/Send';
 const useStyles = makeStyles(() => ({
   card: {
     overflow: 'scroll',
-    height: '100%',
+    height: '80vh',
     maxHeight: '80vh',
   },
   grid: {
