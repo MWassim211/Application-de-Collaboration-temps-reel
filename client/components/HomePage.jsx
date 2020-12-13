@@ -44,7 +44,7 @@ function HomePage(props) {
                 <Grid container spacing={3} alignItems="center" justify="center">
                   <Grid item>
                     <Box justifyContent="center">
-                      <IconButton className={classes.largeIcon}>
+                      <IconButton className={classes.largeIcon} onClick={handleOnVideoClick}>
                         <DuoIcon />
                       </IconButton>
                     </Box>
@@ -66,7 +66,7 @@ function HomePage(props) {
                 <Grid container spacing={3} alignItems="center" justify="center">
                   <Grid item>
                     <Box justifyContent="center">
-                      <IconButton className={classes.largeIcon}>
+                      <IconButton className={classes.largeIcon} onClick={handleOnChatClick}>
                         <ChatIcon />
                       </IconButton>
                     </Box>
