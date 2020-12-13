@@ -15,6 +15,7 @@ Après le clonage du du dépot [git]( https://forge.univ-lyon1.fr/p1808195/tiw8-
 
 Vous pouvez voir le contenu de l'application déploye sur le lien suivant :  https://tiw8-chat.herokuapp.com/
 
+
 ## Spécificité du projet
 
 - La page d'accueil nous dirige vers deux options:
@@ -26,3 +27,4 @@ Vous pouvez voir le contenu de l'application déploye sur le lien suivant :  htt
     * **ChatDiscussion :** Application du chat
         - Les buttons START HANGUP controllent la connection entre les deux utilisateurs on peut toujours se reconnecter
         - La fonctionnalite HangUp coupe la connexion de deux cotes.
+- Configuration Peer dans [PeerConfig.js](client/config/PeerConfig.js)
