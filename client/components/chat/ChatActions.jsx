@@ -40,7 +40,7 @@ function ChatActions(props) {
     setExpanded(!expanded);
   };
 
-  const handleStartClick = () => {
+  const handleStart = () => {
     start();
     setExpanded(false);
   };
@@ -91,20 +91,20 @@ function ChatActions(props) {
       </Collapse>
       <CardActions disableSpacing>
         {!connectionStarted && (
-          <Button onClick={handleStartClick} variant="contained" color="primary" startIcon={<PowerSettingsNew />}>
+          <Button onClick={handleStart} size="large" variant="contained" style={{ backgroundColor: '#075E54', color: 'white' }} startIcon={<PowerSettingsNew />}>
             START
           </Button>
         )}
         {connectionStarted && (
-          <Button onClick={stop} variant="contained" color="secondary" startIcon={<PowerSettingsNew />}>
+          <Button onClick={stop} size="large" variant="contained" style={{ backgroundColor: '#075E54', color: 'white' }} startIcon={<PowerSettingsNew />}>
             STOP
           </Button>
         )}
         {connectionStarted && callAvailable && (
-          <IconButton onClick={call}><Call /></IconButton>
+          <IconButton onClick={call} style={{ backgroundColor: '#075E54', color: 'white', margin: '5px' }}><Call /></IconButton>
         )}
         {connectionStarted && !callAvailable && (
-          <IconButton onClick={hangup}><CallEnd /></IconButton>
+          <IconButton onClick={hangup} style={{ backgroundColor: '#075E54', color: 'white', margin: '5px' }}><CallEnd /></IconButton>
         )}
         <IconButton
           className={clsx(classes.expand, {

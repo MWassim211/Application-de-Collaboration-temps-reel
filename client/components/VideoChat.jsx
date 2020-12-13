@@ -1,37 +1,46 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import Peer from 'peerjs';
 import PropTypes from 'prop-types';
 import {
   Box, Grid, Button,
-  Dialog, DialogContent, DialogContentText, DialogActions, IconButton,
+  Dialog, DialogContent, DialogContentText, DialogActions, IconButton, Typography,
 } from '@material-ui/core';
+import { green, red } from '@material-ui/core/colors';
 import { Call, CallEnd } from '@material-ui/icons';
 import config from '../config/PeerConfig';
 import Chat from './chat/Chat';
+import '../assets/Dots.css';
+import Ringtone from '../assets/ringtone_minimal.wav';
 
 function CallingDialog({ open, caller, handleAnswer }) {
+  const ring = new Audio(Ringtone);
   const handleClose = () => {
     handleAnswer(false);
   };
   const handleAction = (action) => {
     handleAnswer(action);
   };
+  useEffect(() => {
+    if (open) ring.play();
+  });
 
   return (
-    <Dialog open={open} onClose={handleClose}>
+    <Dialog open={open} onClose={handleClose} style={{ backgroundColor: '#333', color: 'white' }}>
       <DialogContent>
         <DialogContentText>
-          {caller}
-          {' '}
-          is calling you!
+          <Typography variant="h6" align="center">
+            {caller}
+            <br />
+            is calling you!
+          </Typography>
         </DialogContentText>
       </DialogContent>
       <DialogActions>
         <IconButton onClick={() => handleAction(true)}>
-          <Call />
+          <Call fontSize="large" style={{ color: green[500] }} />
         </IconButton>
         <IconButton onClick={() => handleAction(false)}>
-          <CallEnd />
+          <CallEnd fontSize="large" style={{ color: red[500] }} />
         </IconButton>
       </DialogActions>
     </Dialog>
@@ -71,6 +80,7 @@ function VideoChat() {
   const [messages, setMessagesList] = useState([]);
   const [message, setMessage] = useState('');
   const [open, setOpen] = useState(false);
+  const [connecting, setConnecting] = useState(false);
 
   const localVideoRef = useRef();
   const remoteVideoRef = useRef();
@@ -85,6 +95,7 @@ function VideoChat() {
     callRef.current.close();
     if (localStreamRef.current) { stopTracks(localStreamRef.current); }
     setCall(true);
+    setConnecting(false);
   };
 
   const onConnectionStateChange = () => {
@@ -92,19 +103,9 @@ function VideoChat() {
       const state = callRef.current.peerConnection.connectionState;
       console.log(`state : ${state}`);
 
-      switch (state) {
-        case 'connecting':
-          console.log(state);
-          break;
-        case 'connected':
-          console.log(state);
-          break;
-        case 'disconnected':
-        case 'failed':
-          hangup();
-          break;
-        default:
-          break;
+      if (state === 'connected') { setConnecting(false); }
+      if (state === 'disconnected' || state === 'failed') {
+        hangup();
       }
     };
   };
@@ -150,6 +151,7 @@ function VideoChat() {
 
   const stop = () => {
     conn.close();
+    if (callRef.current) { hangup(); }
     setConnectedToRemote(false);
     setConnectionStarted(false);
   };
@@ -164,7 +166,10 @@ function VideoChat() {
   };
 
   const call = () => {
-    getMedia(() => { callRef.current = peer.call(receiverId, localStreamRef.current); });
+    getMedia(() => {
+      callRef.current = peer.call(receiverId, localStreamRef.current);
+      setConnecting(true);
+    });
   };
 
   const handleAnswer = (ans) => {
@@ -180,12 +185,20 @@ function VideoChat() {
 
   peer.on('open', (id) => {
     setSenderId(id);
-
+    console.log(`My id ${id}`);
     peer.on('connection', (receivedConnexion) => {
       setConnectedToRemote(true);
       setCall(true);
       receivedConnexion.on('data', (data) => {
-        if (data === 'call-refused') { hangup(); } else { setMessagesList((oldArray) => [...oldArray, data]); }
+        if (data === 'call-refused') {
+          hangup();
+        } else {
+          setMessagesList((oldArray) => [...oldArray, data]);
+        }
+      });
+
+      receivedConnexion.on('close', () => {
+        stop();
       });
     });
 
@@ -225,7 +238,20 @@ function VideoChat() {
         </Grid>
         <Grid item sm={9} lg={9}>
           <CallingDialog open={open} caller={receiverId} handleAnswer={handleAnswer} />
-          <Box height={1} width={1} position="relative">
+          <Box height="97%" width="97%" position="relative">
+            {connecting && (
+              <Box width={1} height={1} style={{ backgroundColor: '#333' }}>
+                <Grid container justify="center" alignItems="center" style={{ height: '100%' }}>
+                  <Grid item>
+                    <div className="spinner">
+                      <div className="bounce1" />
+                      <div className="bounce2" />
+                      <div className="bounce3" />
+                    </div>
+                  </Grid>
+                </Grid>
+              </Box>
+            )}
             <Box p={2}>
               <video ref={remoteVideoRef} autoPlay style={{ width: '100%', maxHeight: '100%' }}>
                 <track kind="captions" srcLang="en" label="english_captions" />

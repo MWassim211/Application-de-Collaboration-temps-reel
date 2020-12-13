@@ -6,23 +6,25 @@ import {
   Grid, IconButton, TextField, InputAdornment, Box, Typography,
 } from '@material-ui/core';
 import Send from '@material-ui/icons/Send';
+import Background from '../../assets/whatsupbg.png';
 
 const useStyles = makeStyles(() => ({
   card: {
     overflow: 'scroll',
     height: '100%',
     maxHeight: '80vh',
+    background: `url(${Background})`,
   },
   grid: {
     flexGrow: 1,
   },
   sender: {
-    background: '#8292ab',
-    color: 'white',
+    background: '#DCF8C6',
+    color: 'black',
   },
   receiver: {
-    background: '#9ea0a3',
-    color: 'white',
+    background: 'white',
+    color: 'black',
   },
 }));
 
@@ -83,10 +85,11 @@ function ChatMessages(props) {
                 fullWidth
                 variant="outlined"
                 onKeyPress={(ev) => { if (ev.key === 'Enter') send(message); }}
+                style={{ borderColor: '#075E54' }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton color="primary" onClick={() => send(message)}>
+                      <IconButton style={{ backgroundColor: '#075E54', color: 'white' }} onClick={() => send(message)}>
                         <Send />
                       </IconButton>
                     </InputAdornment>),
