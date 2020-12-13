@@ -81,7 +81,7 @@ function HomePage(props) {
                         onClick={handleOnChatClick}
                         style={{ backgroundColor: '#075E54' }}
                       >
-                        Chat descussion
+                        CHAT DISCUSSION
                       </Button>
                     </Box>
                   </Grid>
