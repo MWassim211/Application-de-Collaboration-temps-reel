@@ -10,9 +10,9 @@ import InProgressConnection from './InProgressConnection';
 import ConnexionForm from './ConnexionForm';
 
 const peer = new Peer({
-  host: 'tiw8-chat.herokuapp.com',
-  // host: 'localhost',
-  // port: 3000,
+  // host: 'tiw8-chat.herokuapp.com',
+  host: 'localhost',
+  port: 3000,
   path: '/mypeer',
   debug: 2,
 });
